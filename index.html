@@ -39,7 +39,6 @@
   const loader = document.getElementById('loader');
   const result = document.getElementById('result');
 
-  // Եթե նախկինում պահպանված key կա բրաուզերում, լրացնել
   if (localStorage.getItem('openrouter_api_key')) {
     apiKeyInput.value = localStorage.getItem('openrouter_api_key');
   }
@@ -51,7 +50,6 @@
       return;
     }
 
-    // Պահպանել key-ըLocal Storage-ում
     localStorage.setItem('openrouter_api_key', apiKey);
 
     const file = e.target.files[0];
@@ -75,11 +73,11 @@
     });
   }
 
-async function generateCaptionWithOpenRouter(base64DataUrl, apiKey) {
+  async function generateCaptionWithOpenRouter(base64DataUrl, apiKey) {
     const url = "https://openrouter.ai/api/v1/chat/completions";
 
     const payload = {
-      model: "google/gemini-2.0-flash-exp:free", // Թարմացված անվճար մոդելը
+      model: "google/gemini-2.0-flash-exp:free",
       messages: [
         {
           role: "user",
