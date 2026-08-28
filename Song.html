@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Song HTML & Audio Generator</title>
+  <title>Song HTML Generator</title>
   <style>
     body { font-family: sans-serif; background: #121212; color: #f4e4bc; padding: 20px; display: flex; flex-direction: column; align-items: center; }
     .card { background: #1a1a1a; padding: 25px; border-radius: 12px; border: 1px solid #333; max-width: 650px; width: 100%; box-sizing: border-box; }
     h2 { color: #ffcc00; text-align: center; margin-top: 0; }
     .form-group { margin-bottom: 15px; }
     label { display: block; margin-bottom: 5px; font-weight: bold; color: #ccc; }
-    input[type="text"], input[type="password"], input[type="file"] { width: 100%; padding: 10px; border: 1px solid #444; background: #222; color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-    input[type="file"] { padding: 6px; }
+    input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #444; background: #222; color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
     button.submit-btn { background: #ffcc00; color: #000; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px; margin-top: 10px; }
     button.submit-btn:hover { background: #e6b800; }
     .output-header { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
@@ -24,7 +23,7 @@
 <body>
 
 <div class="card">
-  <h2>Երգի HTML Գեներատոր (Աուդիոյով)</h2>
+  <h2>Երգի HTML Գեներատոր</h2>
 
   <div class="form-group">
     <label>Gemini API Key</label>
@@ -32,28 +31,23 @@
   </div>
 
   <div class="form-group">
-    <label>Վերբեռնել Երգի Ֆայլը (.mp3, .wav)</label>
-    <input type="file" id="audioFileInput" accept="audio/*">
-  </div>
-
-  <div class="form-group">
     <label>Երգի անուն</label>
-    <input type="text" id="songTitle" placeholder="օր․ Զարթնիր Լաո">
+    <input type="text" id="songTitle" placeholder="օր․ Դուք խոսեք լեռներ">
   </div>
 
   <div class="form-group">
     <label>Կատարող / Երգիչ</label>
-    <input type="text" id="artistName" placeholder="օր․ Գոհար Անսամբլ">
+    <input type="text" id="artistName" placeholder="օր․ Գաթա Բենդ">
   </div>
 
   <div class="form-group">
     <label>Ֆայլի անուն կայքում (MP3)</label>
-    <input type="text" id="fileName" placeholder="օր․ zartnir-lao.mp3">
+    <input type="text" id="fileName" placeholder="օր․ xoseqlerner.mp3">
   </div>
 
   <div class="form-group">
     <label>Տևողություն</label>
-    <input type="text" id="duration" placeholder="օր․ 03:45">
+    <input type="text" id="duration" placeholder="օր․ 3:57">
   </div>
 
   <div class="form-group">
@@ -63,12 +57,12 @@
 
   <div class="form-group">
     <label>Համարը ցանկում</label>
-    <input type="text" id="songNumber" placeholder="օր․ 01">
+    <input type="text" id="songNumber" placeholder="օր․ 58">
   </div>
 
-  <button class="submit-btn" onclick="generateSongCode()">Վերլուծել Աուդիոն և Գեներացնել 🚀</button>
+  <button class="submit-btn" onclick="generateSongCode()">Գեներացնել 🚀</button>
 
-  <div class="loader" id="loader">Լսվում է աուդիոն, գեներացվում են բառերն ու պատմությունը... ⏳</div>
+  <div class="loader" id="loader">Գեներացվում են երգի բառերն ու պատմությունը... ⏳</div>
 
   <div id="outputs" style="display: none;">
     <div class="output-header">
@@ -90,18 +84,8 @@
     document.getElementById('apiKey').value = localStorage.getItem('gemini_api_key');
   }
 
-  function convertAudioToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result.split(',')[1]);
-      reader.onerror = error => reject(error);
-    });
-  }
-
   async function generateSongCode() {
     const apiKey = document.getElementById('apiKey').value.trim();
-    const audioFile = document.getElementById('audioFileInput').files[0];
     const title = document.getElementById('songTitle').value.trim();
     const artist = document.getElementById('artistName').value.trim();
     const fileName = document.getElementById('fileName').value.trim();
@@ -118,42 +102,19 @@
     document.getElementById('loader').style.display = 'block';
     document.getElementById('outputs').style.display = 'none';
 
+    const promptText = `Provide the full Armenian lyrics and a 100-word Armenian description for the song "${title}" by "${artist}". 
+Format your output EXACTLY as a JSON object with no markdown formatting, no code block backticks:
+{
+  "story": "Around 100 Armenian words describing the history, theme, and meaning of the song.",
+  "lyrics": "Full lyrics in Armenian text."
+}`;
+
     try {
-      let promptText = `Provide detailed information for the Armenian song "${title}" by "${artist}". 
-Format your output EXACTLY as a raw JSON object with no markdown formatting, no backticks, just valid JSON:
-{
-  "story": "A 100-word Armenian text about the history, meaning, and background of this song.",
-  "lyrics": "The full lyrics of this song in Armenian."
-}`;
-
-      const contentsParts = [];
-
-      if (audioFile) {
-        const base64Audio = await convertAudioToBase64(audioFile);
-        promptText = `Listen to the provided audio file for the song "${title}" by "${artist}". 
-Listen carefully and transcribe the EXACT lyrics from the audio file into Armenian text. Also write a 100-word Armenian background/description about the song.
-Format your output EXACTLY as a raw JSON object with no markdown formatting, no backticks, just valid JSON:
-{
-  "story": "A 100-word Armenian description and history of this song.",
-  "lyrics": "The exact full transcribed lyrics in Armenian."
-}`;
-
-        contentsParts.push({ text: promptText });
-        contentsParts.push({
-          inline_data: {
-            mime_type: audioFile.type || "audio/mp3",
-            data: base64Audio
-          }
-        });
-      } else {
-        contentsParts.push({ text: promptText });
-      }
-
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: contentsParts }] })
+        body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
       });
 
       const data = await response.json();
@@ -168,7 +129,7 @@ Format your output EXACTLY as a raw JSON object with no markdown formatting, no 
 
       buildCodes(title, artist, fileName, duration, genre, songNumber, songAiData.story, songAiData.lyrics);
     } catch (err) {
-      alert("Սխալ տեղի ունեցավ հարցումն ուղարկելիս:");
+      alert("Սխալ տեղի ունեցավ տվյալները ստանալիս:");
     } finally {
       document.getElementById('loader').style.display = 'none';
     }
