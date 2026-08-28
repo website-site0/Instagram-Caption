@@ -8,6 +8,7 @@
     body { font-family: sans-serif; background: #f4f4f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
     .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 450px; width: 100%; text-align: center; }
     input[type="file"] { display: none; }
+    .api-input { width: 90%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
     .upload-btn { background: #0095f6; color: white; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; display: inline-block; }
     img { max-width: 100%; border-radius: 8px; margin-top: 15px; display: none; }
     #result { margin-top: 20px; text-align: left; white-space: pre-wrap; font-size: 15px; line-height: 1.5; background: #fafafa; padding: 12px; border-radius: 8px; border: 1px solid #ddd; display: none; }
@@ -18,6 +19,8 @@
 
 <div class="card">
   <h2>Auto Caption & Hashtags</h2>
+  
+  <input type="password" id="apiKeyInput" class="api-input" placeholder="Մուտքագրեք OpenRouter API Key-ը (sk-or-...)">
   
   <label class="upload-btn">
     Ընտրել Նկարը
@@ -30,12 +33,27 @@
 </div>
 
 <script>
+  const apiKeyInput = document.getElementById('apiKeyInput');
   const imageInput = document.getElementById('imageInput');
   const preview = document.getElementById('preview');
   const loader = document.getElementById('loader');
   const result = document.getElementById('result');
 
+  // Եթե նախկինում պահպանված key կա բրաուզերում, լրացնել
+  if (localStorage.getItem('openrouter_api_key')) {
+    apiKeyInput.value = localStorage.getItem('openrouter_api_key');
+  }
+
   imageInput.addEventListener('change', async (e) => {
+    const apiKey = apiKeyInput.value.trim();
+    if (!apiKey) {
+      alert("Խնդրում ենք մուտքագրել OpenRouter API Key-ը:");
+      return;
+    }
+
+    // Պահպանել key-ըLocal Storage-ում
+    localStorage.setItem('openrouter_api_key', apiKey);
+
     const file = e.target.files[0];
     if (!file) return;
 
@@ -44,38 +62,71 @@
     result.style.display = 'none';
     loader.style.display = 'block';
 
-    const base64Image = await convertToBase64(file);
-    
+    const base64DataUrl = await convertToBase64DataUrl(file);
+    generateCaptionWithOpenRouter(base64DataUrl, apiKey);
+  });
+
+  function convertToBase64DataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  async function generateCaptionWithOpenRouter(base64DataUrl, apiKey) {
+    const url = "https://openrouter.ai/api/v1/chat/completions";
+
+    const payload = {
+      model: "google/gemini-2.0-flash-001",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "Generate 3 aesthetic Instagram captions (short, modern, engaging) and 10 relevant popular hashtags for this image. Output ONLY the captions and hashtags, no introductions or meta text."
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: base64DataUrl
+              }
+            }
+          ]
+        }
+      ]
+    };
+
     try {
-      const response = await fetch('/.netlify/functions/caption', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ base64Data: base64Image })
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json();
 
-      if (data.candidates && data.candidates[0]) {
+      if (data.error) {
         loader.style.display = 'none';
-        result.innerText = data.candidates[0].content.parts[0].text;
+        result.innerText = "Սխալ: " + data.error.message;
         result.style.display = 'block';
-      } else {
-        throw new Error(JSON.stringify(data));
+        return;
       }
+
+      const outputText = data.choices[0].message.content;
+      loader.style.display = 'none';
+      result.innerText = outputText;
+      result.style.display = 'block';
     } catch (err) {
       loader.style.display = 'none';
-      result.innerText = "Սխալ տեղի ունեցավ API հարցումն անելիս:";
+      result.innerText = "Սխալ տեղի ունեցավ հարցումն ուղարկելիս:";
       result.style.display = 'block';
     }
-  });
-
-  function convertToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result.split(',')[1]);
-      reader.onerror = error => reject(error);
-    });
   }
 </script>
 
