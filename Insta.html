@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Նկարիդ խոսքը — Instagram վերնագրի գեներատոր</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mardoto:wght@400;700;900&family=Noto+Sans+Armenian:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#1c1720;
+    --bg-panel:#251f2a;
+    --bg-panel-2:#2c2531;
+    --cream:#f4ecdd;
+    --cream-dim:#c9bfae;
+    --apricot:#f2994a;
+    --apricot-dim:#b96f31;
+    --carpet-red:#c1445a;
+    --gold:#d4a24c;
+    --line: rgba(244,236,221,0.14);
+    --line-soft: rgba(244,236,221,0.08);
+    --radius: 14px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(212,162,76,0.10), transparent 60%),
+      var(--bg-deep);
+    color:var(--cream);
+    font-family:'Noto Sans Armenian', sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:32px 16px 64px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  .page{
+    width:100%;
+    max-width:920px;
+  }
+
+  /* ---------- Ararat watermark ---------- */
+  .ararat{
+    position:relative;
+    height:64px;
+    margin-bottom:8px;
+    opacity:0.55;
+    pointer-events:none;
+  }
+  .ararat svg{width:100%;height:100%;display:block;}
+
+  /* ---------- Header ---------- */
+  header{
+    text-align:center;
+    margin-bottom:36px;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    font-size:11px;
+    color:var(--apricot);
+    margin-bottom:14px;
+  }
+  .eyebrow::before, .eyebrow::after{
+    content:"✦";
+    margin:0 10px;
+    color:var(--gold);
+    opacity:0.8;
+  }
+  h1{
+    font-family:'Mardoto', sans-serif;
+    font-weight:900;
+    font-size:clamp(32px, 6vw, 52px);
+    line-height:1.08;
+    margin:0 0 14px;
+    letter-spacing:-0.01em;
+  }
+  h1 .accent{ color:var(--apricot); }
+  .sub{
+    color:var(--cream-dim);
+    font-size:15.5px;
+    max-width:440px;
+    margin:0 auto;
+    line-height:1.6;
+  }
+
+  /* ---------- Ornamental frame ---------- */
+  .frame{
+    position:relative;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:34px;
+    box-shadow:0 30px 60px -30px rgba(0,0,0,0.6);
+  }
+  .corner{
+    position:absolute;
+    width:34px;
+    height:34px;
+    opacity:0.85;
+  }
+  .corner svg{width:100%;height:100%;}
+  .corner.tl{top:10px;left:10px;}
+  .corner.tr{top:10px;right:10px;transform:scaleX(-1);}
+  .corner.bl{bottom:10px;left:10px;transform:scaleY(-1);}
+  .corner.br{bottom:10px;right:10px;transform:scale(-1,-1);}
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:28px;
+  }
+  @media(min-width:760px){
+    .grid{grid-template-columns:1fr 1fr;}
+  }
+
+  /* ---------- Field ---------- */
+  .field-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.06em;
+    color:var(--cream-dim);
+    margin-bottom:8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .key-row{
+    position:relative;
+    margin-bottom:6px;
+  }
+  .key-row input{
+    width:100%;
+    font-family:'JetBrains Mono', monospace;
+    font-size:14px;
+    background:var(--bg-panel-2);
+    border:1px solid var(--line);
+    color:var(--cream);
+    padding:13px 44px 13px 14px;
+    border-radius:10px;
+    outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .key-row input::placeholder{color:#6f6577;}
+  .key-row input:focus{
+    border-color:var(--apricot);
+    box-shadow:0 0 0 3px rgba(242,153,74,0.18);
+  }
+  .key-toggle{
+    position:absolute;
+    right:6px;
+    top:50%;
+    transform:translateY(-50%);
+    background:none;
+    border:none;
+    color:var(--cream-dim);
+    cursor:pointer;
+    padding:8px;
+    display:flex;
+    border-radius:6px;
+  }
+  .key-toggle:hover{color:var(--apricot);}
+  .key-toggle:focus-visible{outline:2px solid var(--apricot); outline-offset:2px;}
+  .key-note{
+    font-size:12px;
+    color:var(--cream-dim);
+    opacity:0.75;
+    margin-bottom:26px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  /* ---------- Upload dropzone ---------- */
+  .dropzone{
+    border:1.5px dashed var(--line);
+    border-radius:var(--radius);
+    background:var(--bg-panel-2);
+    padding:26px 18px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .18s ease, background .18s ease, transform .12s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .dropzone:hover{border-color:var(--apricot-dim); background:#2f2735;}
+  .dropzone.drag{border-color:var(--apricot); background:#33283a; transform:scale(1.01);}
+  .dropzone:focus-visible{outline:2px solid var(--apricot); outline-offset:3px;}
+  .dz-icon{
+    width:46px;height:46px;margin:0 auto 12px;
+    color:var(--apricot);
+  }
+  .dz-icon svg{width:100%;height:100%;}
+  .dz-title{font-weight:600;font-size:15px;margin-bottom:4px;}
+  .dz-hint{font-size:12.5px;color:var(--cream-dim);}
+  input[type="file"]{display:none;}
+
+  .preview-wrap{
+    margin-top:16px;
+    display:none;
+    border-radius:12px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    position:relative;
+  }
+  .preview-wrap img{
+    display:block;
+    width:100%;
+    max-height:320px;
+    object-fit:cover;
+  }
+  .preview-wrap .rescan{
+    position:absolute;
+    top:8px; right:8px;
+    background:rgba(28,23,32,0.75);
+    backdrop-filter:blur(4px);
+    color:var(--cream);
+    border:1px solid var(--line);
+    font-family:'Noto Sans Armenian', sans-serif;
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+  .preview-wrap .rescan:hover{border-color:var(--apricot);}
+
+  /* ---------- Right column / results ---------- */
+  .results-col{display:flex; flex-direction:column;}
+  .results-empty{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    color:var(--cream-dim);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius);
+    padding:30px 18px;
+    min-height:220px;
+  }
+  .results-empty svg{width:38px;height:38px;margin-bottom:12px;opacity:0.6;}
+  .results-empty p{font-size:13px;margin:0;line-height:1.6;max-width:220px;}
+
+  .loader-state{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:220px;
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius);
+    gap:14px;
+  }
+  .shutter{
+    width:44px;height:44px;
+    animation:spin 1.6s linear infinite;
+    color:var(--apricot);
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loader-text{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--cream-dim);
+    letter-spacing:0.04em;
+  }
+  .loader-text .dots::after{
+    content:'';
+    animation:dots 1.4s steps(4,end) infinite;
+  }
+  @keyframes dots{
+    0%{content:'';} 25%{content:'.';} 50%{content:'..';} 75%{content:'...';} 100%{content:'';}
+  }
+
+  .error-box{
+    display:none;
+    border:1px solid rgba(193,68,90,0.5);
+    background:rgba(193,68,90,0.12);
+    color:#f2c3cd;
+    padding:16px;
+    border-radius:var(--radius);
+    font-size:13.5px;
+    line-height:1.6;
+    gap:10px;
+    align-items:flex-start;
+  }
+  .error-box svg{width:18px;height:18px;flex-shrink:0;margin-top:1px;color:var(--carpet-red);}
+
+  .results{display:none; flex-direction:column; gap:14px;}
+  .results-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:2px;
+  }
+  .results-header .field-label{margin:0;}
+  .copy-all{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.04em;
+    background:none;
+    border:1px solid var(--line);
+    color:var(--cream-dim);
+    padding:6px 10px;
+    border-radius:20px;
+    cursor:pointer;
+    display:none;
+  }
+  .copy-all:hover{border-color:var(--apricot); color:var(--apricot);}
+
+  /* film strip caption cards */
+  .filmstrip{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .caption-card{
+    position:relative;
+    background:var(--bg-panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:16px 18px 16px 22px;
+    font-size:14px;
+    line-height:1.6;
+    color:var(--cream);
+  }
+  .caption-card::before{
+    content:'';
+    position:absolute;
+    left:0; top:0; bottom:0;
+    width:6px;
+    background-image: radial-gradient(circle, var(--bg-deep) 2.2px, transparent 2.6px);
+    background-size: 6px 12px;
+    background-repeat: repeat-y;
+    background-position: 0 4px;
+  }
+  .caption-card .idx{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    color:var(--apricot);
+    letter-spacing:0.08em;
+    display:block;
+    margin-bottom:6px;
+  }
+  .caption-copy{
+    position:absolute;
+    top:10px; right:10px;
+    background:none;
+    border:none;
+    color:var(--cream-dim);
+    cursor:pointer;
+    padding:6px;
+    border-radius:6px;
+    display:flex;
+  }
+  .caption-copy:hover{color:var(--apricot); background:rgba(242,153,74,0.1);}
+  .caption-copy svg{width:15px;height:15px;}
+
+  .hashtags-block{
+    background:var(--bg-panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px 16px;
+  }
+  .hashtags-block .field-label{margin-bottom:10px;}
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .chip{
+    font-size:12px;
+    color:var(--gold);
+    background:rgba(212,162,76,0.1);
+    border:1px solid rgba(212,162,76,0.28);
+    padding:4px 9px;
+    border-radius:20px;
+  }
+
+  /* toast */
+  .toast{
+    position:fixed;
+    bottom:24px;
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--gold);
+    color:var(--bg-deep);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    font-weight:500;
+    padding:10px 18px;
+    border-radius:20px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+    z-index:50;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  footer{
+    text-align:center;
+    margin-top:26px;
+    font-size:11.5px;
+    color:var(--cream-dim);
+    opacity:0.6;
+    font-family:'JetBrains Mono', monospace;
+    letter-spacing:0.04em;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="ararat" aria-hidden="true">
+    <svg viewBox="0 0 920 64" preserveAspectRatio="none">
+      <polygon points="0,64 190,10 260,64" fill="#2c2531"/>
+      <polygon points="230,64 340,-4 420,64" fill="#332b3a"/>
+      <polygon points="700,64 800,18 920,64" fill="#2c2531"/>
+      <polygon points="315,-4 340,-4 355,18 300,18" fill="#f4ecdd" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <header>
+    <div class="eyebrow">Ֆոտո լաբորատորիա</div>
+    <h1>Նկարիդ <span class="accent">խոսքը</span></h1>
+    <p class="sub">Վերբեռնիր լուսանկարը — ստացիր 3 վերնագիր և 10 հեշթեգ, պատրաստ Instagram-ի համար։</p>
+  </header>
+
+  <div class="frame">
+    <div class="corner tl"><svg viewBox="0 0 34 34"><path d="M1 1 L1 20 M1 1 L20 1 M1 9 Q1 1 9 1" stroke="#d4a24c" stroke-width="1.4" fill="none"/></svg></div>
+    <div class="corner tr"><svg viewBox="0 0 34 34"><path d="M1 1 L1 20 M1 1 L20 1 M1 9 Q1 1 9 1" stroke="#d4a24c" stroke-width="1.4" fill="none"/></svg></div>
+    <div class="corner bl"><svg viewBox="0 0 34 34"><path d="M1 1 L1 20 M1 1 L20 1 M1 9 Q1 1 9 1" stroke="#d4a24c" stroke-width="1.4" fill="none"/></svg></div>
+    <div class="corner br"><svg viewBox="0 0 34 34"><path d="M1 1 L1 20 M1 1 L20 1 M1 9 Q1 1 9 1" stroke="#d4a24c" stroke-width="1.4" fill="none"/></svg></div>
+
+    <div class="grid">
+      <!-- LEFT: input column -->
+      <div class="input-col">
+
+        <div class="field-label">GEMINI API ԲԱՆԱԼԻ</div>
+        <div class="key-row">
+          <input type="password" id="apiKeyInput" placeholder="AIzaSy...">
+          <button class="key-toggle" id="keyToggle" type="button" aria-label="Ցույց տալ բանալին">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="key-note">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Բանալին պահվում է միայն քո բրաուզերում
+        </div>
+
+        <div class="field-label">ԼՈՒՍԱՆԿԱՐ</div>
+        <label class="dropzone" id="dropzone" tabindex="0">
+          <div class="dz-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="9" cy="11" r="2.2"/><path d="M21 17l-5.5-5-4 4L9 14l-6 6"/></svg>
+          </div>
+          <div class="dz-title">Քաշիր նկարը այստեղ</div>
+          <div class="dz-hint">կամ սեղմիր՝ ընտրելու համար · JPG, PNG</div>
+          <input type="file" id="imageInput" accept="image/*">
+        </label>
+
+        <div class="preview-wrap" id="previewWrap">
+          <img id="preview" alt="Վերբեռնված նկարի նախադիտում">
+          <button class="rescan" id="rescanBtn" type="button">Փոխել նկարը</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: results column -->
+      <div class="results-col">
+        <div class="results-header">
+          <div class="field-label">ԱՐԴՅՈՒՆՔ</div>
+          <button class="copy-all" id="copyAllBtn" type="button">Պատճենել ամեն ինչ</button>
+        </div>
+
+        <div class="results-empty" id="emptyState">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 4h16v16H4z" stroke-dasharray="2 3"/><path d="M9 9h.01M15 9h.01M9 15c1 1.2 2 1.8 3 1.8s2-.6 3-1.8"/></svg>
+          <p>Վերնագրերն ու հեշթեգները կհայտնվեն այստեղ՝ նկար վերբեռնելուց հետո</p>
+        </div>
+
+        <div class="loader-state" id="loaderState">
+          <svg class="shutter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 2v4M12 18v4M22 12h-4M6 12H2M19.07 4.93l-2.83 2.83M7.76 16.24l-2.83 2.83M19.07 19.07l-2.83-2.83M7.76 7.76 4.93 4.93"/>
+          </svg>
+          <div class="loader-text">Նկարը մշակվում է<span class="dots"></span></div>
+        </div>
+
+        <div class="error-box" id="errorBox">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
+          <span id="errorText"></span>
+        </div>
+
+        <div class="results" id="results">
+          <div class="filmstrip" id="filmstrip"></div>
+          <div class="hashtags-block" id="hashtagsBlock" style="display:none;">
+            <div class="field-label">ՀԵՇԹԵԳԵՐ</div>
+            <div class="chips" id="chips"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Nano Banana · Gemini Vision-ով</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const apiKeyInput = document.getElementById('apiKeyInput');
+  const keyToggle = document.getElementById('keyToggle');
+  const dropzone = document.getElementById('dropzone');
+  const imageInput = document.getElementById('imageInput');
+  const previewWrap = document.getElementById('previewWrap');
+  const preview = document.getElementById('preview');
+  const rescanBtn = document.getElementById('rescanBtn');
+
+  const emptyState = document.getElementById('emptyState');
+  const loaderState = document.getElementById('loaderState');
+  const errorBox = document.getElementById('errorBox');
+  const errorText = document.getElementById('errorText');
+  const resultsEl = document.getElementById('results');
+  const filmstrip = document.getElementById('filmstrip');
+  const hashtagsBlock = document.getElementById('hashtagsBlock');
+  const chipsEl = document.getElementById('chips');
+  const copyAllBtn = document.getElementById('copyAllBtn');
+  const toast = document.getElementById('toast');
+
+  let lastCaptions = [];
+  let lastHashtags = [];
+
+  if (localStorage.getItem('gemini_api_key')) {
+    apiKeyInput.value = localStorage.getItem('gemini_api_key');
+  }
+
+  keyToggle.addEventListener('click', () => {
+    apiKeyInput.type = apiKeyInput.type === 'password' ? 'text' : 'password';
+  });
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1800);
+  }
+
+  function setState(state){
+    // state: 'empty' | 'loading' | 'error' | 'results'
+    emptyState.style.display = state === 'empty' ? 'flex' : 'none';
+    loaderState.style.display = state === 'loading' ? 'flex' : 'none';
+    errorBox.style.display = state === 'error' ? 'flex' : 'none';
+    resultsEl.style.display = state === 'results' ? 'flex' : 'none';
+    copyAllBtn.style.display = state === 'results' ? 'inline-block' : 'none';
+  }
+
+  ['dragover','dragenter'].forEach(evt =>
+    dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add('drag'); })
+  );
+  ['dragleave','drop'].forEach(evt =>
+    dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove('drag'); })
+  );
+  dropzone.addEventListener('drop', e => {
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+  dropzone.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); imageInput.click(); }
+  });
+  rescanBtn.addEventListener('click', (e) => { e.preventDefault(); imageInput.click(); });
+
+  imageInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) handleFile(file);
+  });
+
+  function handleFile(file){
+    const apiKey = apiKeyInput.value.trim();
+    if (!apiKey) {
+      errorText.textContent = 'Խնդրում ենք նախ մուտքագրել Gemini API Key-ը վերևում։';
+      setState('error');
+      apiKeyInput.focus();
+      return;
+    }
+    localStorage.setItem('gemini_api_key', apiKey);
+
+    preview.src = URL.createObjectURL(file);
+    previewWrap.style.display = 'block';
+    setState('loading');
+
+    convertToBase64(file).then(base64Data => {
+      generateCaption(base64Data, file.type, apiKey);
+    });
+  }
+
+  function convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  async function generateCaption(base64Data, mimeType, apiKey) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`;
+
+    const payload = {
+      contents: [
+        {
+          parts: [
+            { text: "Generate 3 aesthetic Instagram captions (short, modern, engaging) and 10 relevant popular hashtags for this image. Output ONLY the captions and hashtags, no introductions or meta text." },
+            { inline_data: { mime_type: mimeType, data: base64Data } }
+          ]
+        }
+      ]
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+
+      if (data.error) {
+        errorText.textContent = 'Սխալ. ' + data.error.message;
+        setState('error');
+        return;
+      }
+
+      const outputText = data.candidates[0].content.parts[0].text;
+      renderOutput(outputText);
+      setState('results');
+    } catch (err) {
+      errorText.textContent = 'Սխալ տեղի ունեցավ հարցումն ուղարկելիս։ Փորձիր կրկին։';
+      setState('error');
+    }
+  }
+
+  function renderOutput(text){
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    const hashtagWords = [];
+    const captionLines = [];
+
+    lines.forEach(line => {
+      const words = line.split(/\s+/);
+      const hashWords = words.filter(w => w.startsWith('#'));
+      if (hashWords.length >= 3 && hashWords.length / words.length > 0.5) {
+        hashtagWords.push(...hashWords);
+      } else {
+        captionLines.push(line.replace(/^[-*\d\.\)]+\s*/, ''));
+      }
+    });
+
+    let captions = captionLines.filter(l => l.length > 0);
+    if (captions.length === 0) captions = ['(տեքստ չի հայտնաբերվել)'];
+
+    lastCaptions = captions;
+    lastHashtags = hashtagWords;
+
+    filmstrip.innerHTML = '';
+    captions.forEach((cap, i) => {
+      const card = document.createElement('div');
+      card.className = 'caption-card';
+      card.innerHTML = `
+        <span class="idx">ՏԱՐԲԵՐԱԿ ${i+1}</span>
+        <span class="cap-text"></span>
+        <button class="caption-copy" type="button" aria-label="Պատճենել">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V4h12"/></svg>
+        </button>`;
+      card.querySelector('.cap-text').textContent = cap;
+      card.querySelector('.caption-copy').addEventListener('click', () => {
+        navigator.clipboard.writeText(cap);
+        showToast('Պատճենվեց');
+      });
+      filmstrip.appendChild(card);
+    });
+
+    if (hashtagWords.length > 0) {
+      hashtagsBlock.style.display = 'block';
+      chipsEl.innerHTML = '';
+      hashtagWords.forEach(tag => {
+        const chip = document.createElement('span');
+        chip.className = 'chip';
+        chip.textContent = tag;
+        chipsEl.appendChild(chip);
+      });
+    } else {
+      hashtagsBlock.style.display = 'none';
+    }
+  }
+
+  copyAllBtn.addEventListener('click', () => {
+    const all = lastCaptions.join('\n\n') + (lastHashtags.length ? '\n\n' + lastHashtags.join(' ') : '');
+    navigator.clipboard.writeText(all);
+    showToast('Ամեն ինչ պատճենվեց');
+  });
+</script>
+
+</body>
+</html>
