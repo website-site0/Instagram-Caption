@@ -20,7 +20,7 @@
 <div class="card">
   <h2>Auto Caption & Hashtags</h2>
   
-  <input type="password" id="apiKeyInput" class="api-input" placeholder="Մուտքագրեք OpenRouter API Key-ը (sk-or-...)">
+  <input type="password" id="apiKeyInput" class="api-input" placeholder="Մուտքագրեք Gemini API Key-ը (AIzaSy...)">
   
   <label class="upload-btn">
     Ընտրել Նկարը
@@ -39,18 +39,18 @@
   const loader = document.getElementById('loader');
   const result = document.getElementById('result');
 
-  if (localStorage.getItem('openrouter_api_key')) {
-    apiKeyInput.value = localStorage.getItem('openrouter_api_key');
+  if (localStorage.getItem('gemini_api_key')) {
+    apiKeyInput.value = localStorage.getItem('gemini_api_key');
   }
 
   imageInput.addEventListener('change', async (e) => {
     const apiKey = apiKeyInput.value.trim();
     if (!apiKey) {
-      alert("Խնդրում ենք մուտքագրել OpenRouter API Key-ը:");
+      alert("Խնդրում ենք մուտքագրել Gemini API Key-ը:");
       return;
     }
 
-    localStorage.setItem('openrouter_api_key', apiKey);
+    localStorage.setItem('gemini_api_key', apiKey);
 
     const file = e.target.files[0];
     if (!file) return;
@@ -60,77 +60,64 @@
     result.style.display = 'none';
     loader.style.display = 'block';
 
-    const base64DataUrl = await convertToBase64DataUrl(file);
-    generateCaptionWithOpenRouter(base64DataUrl, apiKey);
+    const base64Data = await convertToBase64(file);
+    const mimeType = file.type;
+    generateCaption(base64Data, mimeType, apiKey);
   });
 
-  function convertToBase64DataUrl(file) {
+  function convertToBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
+      reader.onload = () => resolve(reader.result.split(',')[1]);
       reader.onerror = error => reject(error);
     });
   }
 
-  async function generateCaptionWithOpenRouter(base64DataUrl, apiKey) {
-    const url = "https://openrouter.ai/api/v1/chat/completions";
+  async function generateCaption(base64Data, mimeType, apiKey) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-    // OpenRouter-ի անվճար Vision մոդելներ
-    const models = [
-      "google/gemini-2.0-flash-lite-001",
-      "meta-llama/llama-3.2-11b-vision-instruct:free"
-    ];
-
-    let lastError = "";
-
-    for (const model of models) {
-      try {
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            model: model,
-            messages: [
-              {
-                role: "user",
-                content: [
-                  {
-                    type: "text",
-                    text: "Generate 3 aesthetic Instagram captions (short, modern, engaging) and 10 relevant popular hashtags for this image. Output ONLY the captions and hashtags, no introductions or meta text."
-                  },
-                  {
-                    type: "image_url",
-                    image_url: { url: base64DataUrl }
-                  }
-                ]
+    const payload = {
+      contents: [
+        {
+          parts: [
+            { text: "Generate 3 aesthetic Instagram captions (short, modern, engaging) and 10 relevant popular hashtags for this image. Output ONLY the captions and hashtags, no introductions or meta text." },
+            {
+              inline_data: {
+                mime_type: mimeType,
+                data: base64Data
               }
-            ]
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.choices && data.choices[0]) {
-          loader.style.display = 'none';
-          result.innerText = data.choices[0].message.content;
-          result.style.display = 'block';
-          return; // Հաջողությամբ ստանալու դեպքում ավարտել
-        } else if (data.error) {
-          lastError = data.error.message;
+            }
+          ]
         }
-      } catch (err) {
-        lastError = err.message;
-      }
-    }
+      ]
+    };
 
-    // Եթե բոլոր մոդելները սխալ տվեցին
-    loader.style.display = 'none';
-    result.innerText = "Սխալ: " + lastError;
-    result.style.display = 'block';
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        loader.style.display = 'none';
+        result.innerText = "Սխալ: " + data.error.message;
+        result.style.display = 'block';
+        return;
+      }
+
+      const outputText = data.candidates[0].content.parts[0].text;
+      loader.style.display = 'none';
+      result.innerText = outputText;
+      result.style.display = 'block';
+    } catch (err) {
+      loader.style.display = 'none';
+      result.innerText = "Սխալ տեղի ունեցավ հարցումն ուղարկելիս:";
+      result.style.display = 'block';
+    }
   }
 </script>
 
