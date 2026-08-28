@@ -75,8 +75,9 @@
     });
   }
 
-  async function generateCaption(base64Data, apiKey) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+ async function generateCaption(base64Data, apiKey) {
+    // Թարմացված URL՝ gemini-2.5-flash մոդելով
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     const promptText = "Generate 3 aesthetic Instagram captions (short, modern, engaging) and 10 relevant popular hashtags for this image. Output ONLY the captions and hashtags, no introductions or meta text.";
 
@@ -84,7 +85,12 @@
       contents: [{
         parts: [
           { text: promptText },
-          { inline_data: { mime_type: "image/jpeg", data: base64Data } }
+          {
+            inline_data: {
+              mime_type: "image/jpeg",
+              data: base64Data
+            }
+          }
         ]
       }]
     };
@@ -97,6 +103,14 @@
       });
 
       const data = await response.json();
+
+      if (data.error) {
+        loader.style.display = 'none';
+        result.innerText = "API Սխալ: " + data.error.message;
+        result.style.display = 'block';
+        return;
+      }
+
       const outputText = data.candidates[0].content.parts[0].text;
 
       loader.style.display = 'none';
@@ -104,7 +118,7 @@
       result.style.display = 'block';
     } catch (err) {
       loader.style.display = 'none';
-      result.innerText = "Սխալ տեղի ունեցավ: Ստուգեք API Key-ը:";
+      result.innerText = "Սխալ տեղի ունեցավ հարցումն ուղարկելիս:";
       result.style.display = 'block';
     }
   }
