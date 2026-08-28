@@ -75,11 +75,11 @@
     });
   }
 
-  async function generateCaptionWithOpenRouter(base64DataUrl, apiKey) {
+async function generateCaptionWithOpenRouter(base64DataUrl, apiKey) {
     const url = "https://openrouter.ai/api/v1/chat/completions";
 
     const payload = {
-      model: "google/gemini-2.0-flash-001",
+      model: "google/gemini-2.0-flash-exp:free", // Թարմացված անվճար մոդելը
       messages: [
         {
           role: "user",
