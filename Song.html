@@ -332,14 +332,14 @@
 
         <div class="field">
           <div class="field-label">ԿՑԵԼ ԵՐԳԻ ՖԱՅԼԸ (ԸՍՏ ՑԱՆԿՈՒԹՅԱՆ)</div>
-          <label class="file-attach" id="fileAttach" tabindex="0">
+          <div class="file-attach" id="fileAttach" tabindex="0" role="button" aria-label="Ընտրել աudio ֆայլ">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.5v5a3 3 0 0 1-3 3h-12a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h5.5"/><circle cx="9" cy="9" r="2"/><path d="M3 16l4.5-4.5a2 2 0 0 1 2.8 0L14 15"/><circle cx="18" cy="6" r="4" fill="#f2994a" stroke="none"/><path d="M18 4.3v3.4M16.6 6h2.8" stroke="#1c1720" stroke-width="1.3"/></svg>
             <span class="fa-text" id="fileAttachText">Ընտրել աudio ֆայլ</span>
             <button type="button" class="fa-clear" id="fileClearBtn" aria-label="Հեռացնել ֆայլը">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
             </button>
-            <input type="file" id="audioFile" accept="audio/*">
-          </label>
+            <input type="file" id="audioFile" accept="audio/*" tabindex="-1">
+          </div>
         </div>
 
         <div class="field">
@@ -468,6 +468,10 @@
     audioFile.value = '';
     fileAttachText.textContent = DEFAULT_FILE_TEXT;
     fileAttach.classList.remove('has-file');
+  });
+  fileAttach.addEventListener('click', (e) => {
+    if (e.target.closest('.fa-clear')) return;
+    audioFile.click();
   });
   fileAttach.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); audioFile.click(); }
