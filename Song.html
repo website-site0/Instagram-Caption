@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Երգի ծնունդը — HTML Գեներատոր</title>
+<title>Երգի պատմությունը — Song HTML գեներատոր</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mardoto:wght@400;700;900&family=Noto+Sans+Armenian:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -12,7 +12,6 @@
     --bg-deep:#1c1720;
     --bg-panel:#251f2a;
     --bg-panel-2:#2c2531;
-    --code-bg:#161119;
     --cream:#f4ecdd;
     --cream-dim:#c9bfae;
     --apricot:#f2994a;
@@ -87,43 +86,29 @@
     animation:navPulse 2.6s ease-in-out infinite;
   }
   .nav-btn svg{ width:15px; height:15px; }
-  @keyframes navPulse{
-    0%,100%{opacity:0.25; transform:scale(1);}
-    50%{opacity:0.55; transform:scale(1.1);}
-  }
-  @keyframes navIn{
-    from{opacity:0; transform:translateY(-14px);}
-    to{opacity:1; transform:translateY(0);}
-  }
+  @keyframes navPulse{ 0%,100%{opacity:0.25; transform:scale(1);} 50%{opacity:0.55; transform:scale(1.1);} }
+  @keyframes navIn{ from{opacity:0; transform:translateY(-14px);} to{opacity:1; transform:translateY(0);} }
 
-  .page{ width:100%; max-width:820px; }
+  .page{ width:100%; max-width:960px; }
 
-  /* ---------- Ararat watermark ---------- */
   .ararat{ position:relative; height:64px; margin-bottom:8px; opacity:0.55; pointer-events:none; }
   .ararat svg{ width:100%; height:100%; display:block; }
 
   header{ text-align:center; margin-bottom:36px; }
   .eyebrow{
     font-family:'JetBrains Mono', monospace;
-    letter-spacing:0.22em;
-    text-transform:uppercase;
-    font-size:11px;
-    color:var(--apricot);
-    margin-bottom:14px;
+    letter-spacing:0.22em; text-transform:uppercase;
+    font-size:11px; color:var(--apricot); margin-bottom:14px;
   }
   .eyebrow::before, .eyebrow::after{ content:"✦"; margin:0 10px; color:var(--gold); opacity:0.8; }
   h1{
-    font-family:'Mardoto', sans-serif;
-    font-weight:900;
-    font-size:clamp(30px, 5.6vw, 48px);
-    line-height:1.1;
-    margin:0 0 14px;
-    letter-spacing:-0.01em;
+    font-family:'Mardoto', sans-serif; font-weight:900;
+    font-size:clamp(30px, 5.6vw, 48px); line-height:1.1;
+    margin:0 0 14px; letter-spacing:-0.01em;
   }
   h1 .accent{ color:var(--apricot); }
-  .sub{ color:var(--cream-dim); font-size:15px; max-width:460px; margin:0 auto; line-height:1.6; }
+  .sub{ color:var(--cream-dim); font-size:15.5px; max-width:460px; margin:0 auto; line-height:1.6; }
 
-  /* ---------- Frame ---------- */
   .frame{
     position:relative;
     background:var(--bg-panel);
@@ -139,56 +124,27 @@
   .corner.bl{ bottom:10px; left:10px; transform:scaleY(-1); }
   .corner.br{ bottom:10px; right:10px; transform:scale(-1,-1); }
 
-  /* ---------- Section labels ---------- */
-  .section-label{
-    font-family:'JetBrains Mono', monospace;
-    font-size:11px;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    color:var(--gold);
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin:28px 0 14px;
-  }
-  .section-label:first-child{ margin-top:0; }
-  .section-label::after{ content:''; flex:1; height:1px; background:var(--line); }
+  .grid{ display:grid; grid-template-columns:1fr; gap:28px; }
+  @media(min-width:820px){ .grid{ grid-template-columns:1fr 1fr; } }
 
-  /* ---------- Fields ---------- */
   .field-label{
-    font-family:'JetBrains Mono', monospace;
-    font-size:11.5px;
-    letter-spacing:0.04em;
-    color:var(--cream-dim);
-    margin-bottom:7px;
-    display:block;
+    font-family:'JetBrains Mono', monospace; font-size:12px;
+    letter-spacing:0.06em; color:var(--cream-dim);
+    margin-bottom:8px; display:flex; align-items:center; gap:8px;
   }
-  .form-row{ margin-bottom:16px; }
-  .form-grid2{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-    margin-bottom:16px;
-  }
-  @media(max-width:520px){ .form-grid2{ grid-template-columns:1fr; } }
 
-  input[type="text"], input[type="password"]{
-    width:100%;
-    font-family:'Noto Sans Armenian', sans-serif;
-    font-size:14px;
-    background:var(--bg-panel-2);
-    border:1px solid var(--line);
-    color:var(--cream);
-    padding:12px 14px;
-    border-radius:10px;
-    outline:none;
+  .field{ margin-bottom:18px; }
+  .field input{
+    width:100%; font-family:'Noto Sans Armenian', sans-serif; font-size:14px;
+    background:var(--bg-panel-2); border:1px solid var(--line); color:var(--cream);
+    padding:12px 14px; border-radius:10px; outline:none;
     transition:border-color .15s ease, box-shadow .15s ease;
   }
-  input::placeholder{ color:#6f6577; }
-  input:focus{ border-color:var(--apricot); box-shadow:0 0 0 3px rgba(242,153,74,0.18); }
+  .field input::placeholder{ color:#6f6577; }
+  .field input:focus{ border-color:var(--apricot); box-shadow:0 0 0 3px rgba(242,153,74,0.18); }
 
   .key-row{ position:relative; }
-  .key-row input{ padding-right:44px; font-family:'JetBrains Mono', monospace; }
+  .key-row input{ font-family:'JetBrains Mono', monospace; padding-right:44px; }
   .key-toggle{
     position:absolute; right:6px; top:50%; transform:translateY(-50%);
     background:none; border:none; color:var(--cream-dim); cursor:pointer;
@@ -198,168 +154,132 @@
   .key-toggle:focus-visible{ outline:2px solid var(--apricot); outline-offset:2px; }
   .key-note{
     font-size:12px; color:var(--cream-dim); opacity:0.75;
-    margin-top:8px; display:flex; align-items:center; gap:6px;
+    margin:6px 0 22px; display:flex; align-items:center; gap:6px;
   }
 
-  /* ---------- Submit ---------- */
+  .field-pair{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+  .file-attach{
+    display:flex; align-items:center; gap:10px;
+    border:1.5px dashed var(--line); border-radius:10px;
+    background:var(--bg-panel-2); padding:11px 14px;
+    cursor:pointer; transition:border-color .15s ease, background .15s ease;
+  }
+  .file-attach:hover{ border-color:var(--apricot-dim); background:#2f2735; }
+  .file-attach:focus-visible{ outline:2px solid var(--apricot); outline-offset:2px; }
+  .file-attach.has-file{ border-style:solid; border-color:var(--apricot-dim); }
+  .file-attach svg{ width:18px; height:18px; color:var(--apricot); flex-shrink:0; }
+  .file-attach .fa-text{ font-size:13px; color:var(--cream-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; }
+  .file-attach.has-file .fa-text{ color:var(--cream); }
+  .file-attach .fa-clear{
+    background:none; border:none; color:var(--cream-dim); cursor:pointer;
+    padding:4px; border-radius:6px; display:none; flex-shrink:0;
+  }
+  .file-attach.has-file .fa-clear{ display:flex; }
+  .file-attach .fa-clear:hover{ color:var(--carpet-red); }
+  .file-attach input[type="file"]{ display:none; }
+
   .submit-btn{
     width:100%;
     display:flex; align-items:center; justify-content:center; gap:10px;
-    font-family:'Mardoto', sans-serif;
-    font-weight:700;
-    font-size:15.5px;
+    font-family:'Mardoto', sans-serif; font-weight:700; font-size:15px;
     color:var(--bg-deep);
     background:linear-gradient(135deg, var(--gold), var(--apricot));
-    border:none;
-    padding:15px 20px;
-    border-radius:12px;
-    cursor:pointer;
-    margin-top:26px;
-    box-shadow:0 14px 30px -14px rgba(242,153,74,0.6);
-    transition:transform .15s ease, box-shadow .15s ease, filter .15s ease;
+    border:none; padding:14px 20px; border-radius:12px; cursor:pointer;
+    box-shadow:0 14px 26px -12px rgba(242,153,74,0.6);
+    transition:transform .15s ease, box-shadow .15s ease;
+    margin-top:4px;
   }
-  .submit-btn:hover{ transform:translateY(-2px); box-shadow:0 18px 36px -14px rgba(242,153,74,0.75); }
+  .submit-btn:hover{ transform:translateY(-2px); box-shadow:0 18px 30px -10px rgba(242,153,74,0.75); }
   .submit-btn:active{ transform:translateY(0); }
-  .submit-btn:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
   .submit-btn svg{ width:17px; height:17px; }
 
-  /* ---------- Loader ---------- */
-  .loader-state{
-    display:none;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:14px;
-    padding:34px 18px;
-    border:1px solid var(--line-soft);
-    border-radius:var(--radius);
-    margin-top:22px;
+  /* ---------- Right column / output states ---------- */
+  .results-col{ display:flex; flex-direction:column; }
+
+  .results-empty{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; color:var(--cream-dim);
+    border:1px solid var(--line-soft); border-radius:var(--radius);
+    padding:30px 18px; min-height:340px;
   }
-  .vinyl{ width:46px; height:46px; animation:spin 2.4s linear infinite; }
+  .results-empty svg{ width:42px; height:42px; margin-bottom:14px; opacity:0.6; }
+  .results-empty p{ font-size:13px; margin:0; line-height:1.6; max-width:230px; }
+
+  .loader-state{
+    display:none; flex-direction:column; align-items:center; justify-content:center;
+    min-height:340px; border:1px solid var(--line-soft); border-radius:var(--radius); gap:16px;
+  }
+  .vinyl{ width:64px; height:64px; animation:spin 2.4s linear infinite; }
   @keyframes spin{ to{ transform:rotate(360deg); } }
-  .loader-text{ font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--cream-dim); letter-spacing:0.03em; }
+  .loader-text{ font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--cream-dim); letter-spacing:0.04em; }
   .loader-text .dots::after{ content:''; animation:dots 1.4s steps(4,end) infinite; }
   @keyframes dots{ 0%{content:'';} 25%{content:'.';} 50%{content:'..';} 75%{content:'...';} 100%{content:'';} }
 
-  /* ---------- Error ---------- */
   .error-box{
-    display:none; align-items:flex-start; gap:10px;
-    border:1px solid rgba(193,68,90,0.5);
-    background:rgba(193,68,90,0.12);
-    color:#f2c3cd;
-    padding:14px 16px;
-    border-radius:var(--radius);
-    font-size:13.5px;
-    line-height:1.6;
-    margin-top:22px;
+    display:none; border:1px solid rgba(193,68,90,0.5); background:rgba(193,68,90,0.12);
+    color:#f2c3cd; padding:16px; border-radius:var(--radius); font-size:13.5px; line-height:1.6;
+    gap:10px; align-items:flex-start;
   }
   .error-box svg{ width:18px; height:18px; flex-shrink:0; margin-top:1px; color:var(--carpet-red); }
 
-  /* ---------- Outputs ---------- */
-  .outputs{ display:none; margin-top:30px; }
-  .tabs{
-    display:inline-flex;
-    background:var(--bg-panel-2);
-    border:1px solid var(--line);
-    border-radius:30px;
-    padding:4px;
-    gap:4px;
-    margin-bottom:14px;
-  }
-  .tab-btn{
-    font-family:'JetBrains Mono', monospace;
-    font-size:12px;
-    letter-spacing:0.03em;
-    background:none;
-    border:none;
-    color:var(--cream-dim);
-    padding:8px 16px;
-    border-radius:24px;
-    cursor:pointer;
-    transition:background .15s ease, color .15s ease;
-  }
-  .tab-btn.active{
-    background:linear-gradient(135deg, var(--gold), var(--apricot));
-    color:var(--bg-deep);
-    font-weight:600;
-  }
+  .results{ display:none; flex-direction:column; gap:18px; }
 
-  .code-panel{ display:none; }
-  .code-panel.active{ display:block; }
-  .code-head{
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:8px;
+  .label-card{
+    background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; padding:16px 18px;
+    display:flex; align-items:center; gap:14px;
   }
-  .code-head .field-label{ margin:0; }
+  .label-disc{
+    width:44px; height:44px; border-radius:50%; flex-shrink:0;
+    background:repeating-radial-gradient(circle at center, var(--bg-deep) 0 2px, #3a3140 2px 4px);
+    border:2px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .label-disc::after{ content:''; width:8px; height:8px; border-radius:50%; background:var(--apricot); }
+  .label-text{ overflow:hidden; }
+  .label-text .lt-title{ font-family:'Mardoto', sans-serif; font-weight:700; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .label-text .lt-sub{ font-size:12px; color:var(--cream-dim); }
+
+  .output-card{
+    background:var(--bg-panel-2); border:1px solid var(--line); border-radius:12px; overflow:hidden;
+  }
+  .output-card .oc-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 16px; border-bottom:1px solid var(--line);
+  }
+  .oc-header .field-label{ margin:0; }
   .copy-btn{
-    font-family:'JetBrains Mono', monospace;
-    font-size:11.5px;
-    display:flex; align-items:center; gap:6px;
-    background:none;
-    border:1px solid var(--line);
-    color:var(--cream-dim);
-    padding:7px 12px;
-    border-radius:20px;
-    cursor:pointer;
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.04em;
+    background:none; border:1px solid var(--line); color:var(--cream-dim);
+    padding:6px 12px; border-radius:20px; cursor:pointer; display:flex; align-items:center; gap:6px;
     transition:border-color .15s ease, color .15s ease;
   }
   .copy-btn:hover{ border-color:var(--apricot); color:var(--apricot); }
-  .copy-btn svg{ width:13px; height:13px; }
+  .copy-btn svg{ width:12px; height:12px; }
+  .output-card textarea{
+    width:100%; height:220px; background:#141019; color:#8fe3a8;
+    font-family:'JetBrains Mono', monospace; font-size:12px; line-height:1.6;
+    padding:14px 16px; border:none; resize:vertical; outline:none;
+  }
+  .output-card.item textarea{ height:120px; }
 
-  .code-box{
-    position:relative;
-    background:var(--code-bg);
-    border:1px solid var(--line);
-    border-radius:10px;
-    overflow:hidden;
-  }
-  .code-box::before{
-    content:'';
-    display:block;
-    height:30px;
-    background:#1d1721;
-    border-bottom:1px solid var(--line);
-  }
-  .code-box::after{
-    content:'● ● ●';
-    position:absolute;
-    top:8px; left:12px;
-    font-size:10px;
-    letter-spacing:4px;
-    color:#4a4152;
-  }
-  textarea{
-    width:100%;
-    height:260px;
-    background:transparent;
-    color:#8ee6a8;
-    font-family:'JetBrains Mono', monospace;
-    font-size:12.5px;
-    line-height:1.6;
-    padding:14px;
-    border:none;
-    resize:vertical;
-    outline:none;
-  }
-  #itemHtmlOutput{ height:130px; }
-
-  footer{
-    text-align:center; margin-top:26px; font-size:11.5px;
-    color:var(--cream-dim); opacity:0.6;
-    font-family:'JetBrains Mono', monospace; letter-spacing:0.04em;
-  }
-
+  /* toast */
   .toast{
-    position:fixed; bottom:24px; left:50%;
-    transform:translateX(-50%) translateY(20px);
-    background:var(--gold); color:var(--bg-deep);
-    font-family:'JetBrains Mono', monospace; font-size:12.5px; font-weight:500;
-    padding:10px 18px; border-radius:20px;
-    opacity:0; pointer-events:none;
-    transition:opacity .2s ease, transform .2s ease;
-    z-index:80;
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--gold); color:var(--bg-deep); font-family:'JetBrains Mono', monospace;
+    font-size:12.5px; font-weight:500; padding:10px 18px; border-radius:20px;
+    opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:50;
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  footer{
+    text-align:center; margin-top:26px; font-size:11.5px; color:var(--cream-dim);
+    opacity:0.6; font-family:'JetBrains Mono', monospace; letter-spacing:0.04em;
+  }
+
+  @media(max-width:480px){
+    .field-pair{ grid-template-columns:1fr; }
+  }
 </style>
 </head>
 <body>
@@ -374,18 +294,18 @@
 <div class="page">
 
   <div class="ararat" aria-hidden="true">
-    <svg viewBox="0 0 820 64" preserveAspectRatio="none">
+    <svg viewBox="0 0 920 64" preserveAspectRatio="none">
       <polygon points="0,64 190,10 260,64" fill="#2c2531"/>
       <polygon points="230,64 340,-4 420,64" fill="#332b3a"/>
-      <polygon points="600,64 700,18 820,64" fill="#2c2531"/>
+      <polygon points="700,64 800,18 920,64" fill="#2c2531"/>
       <polygon points="315,-4 340,-4 355,18 300,18" fill="#f4ecdd" opacity="0.5"/>
     </svg>
   </div>
 
   <header>
-    <div class="eyebrow">Ձայնագրության լաբորատորիա</div>
-    <h1>Երգի <span class="accent">ծնունդը</span></h1>
-    <p class="sub">Լրացրու երգի տվյալները — AI-ն կգրի պատմությունն ու բառերը, դու կստանաս պատրաստ էջի կոդը։</p>
+    <div class="eyebrow">Գրամոֆոն արհեստանոց</div>
+    <h1>Երգի <span class="accent">պատմությունը</span></h1>
+    <p class="sub">Լրացրու երգի տվյալները — ստացիր բառերը, պատմությունը և պատրաստի HTML կոդը էջիդ համար։</p>
   </header>
 
   <div class="frame">
@@ -394,93 +314,125 @@
     <div class="corner bl"><svg viewBox="0 0 34 34"><path d="M1 1 L1 20 M1 1 L20 1 M1 9 Q1 1 9 1" stroke="#d4a24c" stroke-width="1.4" fill="none"/></svg></div>
     <div class="corner br"><svg viewBox="0 0 34 34"><path d="M1 1 L1 20 M1 1 L20 1 M1 9 Q1 1 9 1" stroke="#d4a24c" stroke-width="1.4" fill="none"/></svg></div>
 
-    <div class="section-label">Gemini API</div>
-    <div class="key-row">
-      <input type="password" id="apiKey" placeholder="AIzaSy...">
-      <button class="key-toggle" id="keyToggle" type="button" aria-label="Ցույց տալ բանալին">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-      </button>
-    </div>
-    <div class="key-note">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-      Բանալին պահվում է միայն քո բրաուզերում
-    </div>
+    <div class="grid">
+      <!-- LEFT: form column -->
+      <div class="form-col">
 
-    <div class="section-label">Երգի ինքնությունը</div>
-    <div class="form-row">
-      <label class="field-label">ԵՐԳԻ ԱՆՈՒՆ</label>
-      <input type="text" id="songTitle" placeholder="օր․ Դուք խոսեք լեռներ">
-    </div>
-    <div class="form-row">
-      <label class="field-label">ԿԱՏԱՐՈՂ / ԵՐԳԻՉ</label>
-      <input type="text" id="artistName" placeholder="օր․ Գաթա Բենդ">
-    </div>
-
-    <div class="section-label">Ֆայլի տվյալներ</div>
-    <div class="form-grid2">
-      <div>
-        <label class="field-label">ՖԱՅԼԻ ԱՆՈՒՆ (MP3)</label>
-        <input type="text" id="fileName" placeholder="օր․ xoseqlerner.mp3">
-      </div>
-      <div>
-        <label class="field-label">ՏԵՎՈՂՈՒԹՅՈՒՆ</label>
-        <input type="text" id="duration" placeholder="օր․ 3:57">
-      </div>
-      <div>
-        <label class="field-label">ԺԱՆՐ</label>
-        <input type="text" id="genre" placeholder="օր․ Ժողովրդական">
-      </div>
-      <div>
-        <label class="field-label">ՀԱՄԱՐԸ ՑԱՆԿՈՒՄ</label>
-        <input type="text" id="songNumber" placeholder="օր․ 58">
-      </div>
-    </div>
-
-    <button class="submit-btn" id="generateBtn" onclick="generateSongCode()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
-      Գեներացնել
-    </button>
-
-    <div class="loader-state" id="loader">
-      <svg class="vinyl" viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="12" r="10" stroke="#d4a24c" stroke-width="1.6"/>
-        <circle cx="12" cy="12" r="6.2" stroke="#f2994a" stroke-width="1.2" stroke-dasharray="2 2"/>
-        <circle cx="12" cy="12" r="1.6" fill="#f2994a"/>
-      </svg>
-      <div class="loader-text">Ստեղծվում են բառերն ու պատմությունը<span class="dots"></span></div>
-    </div>
-
-    <div class="error-box" id="errorBox">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
-      <span id="errorText"></span>
-    </div>
-
-    <div class="outputs" id="outputs">
-      <div class="tabs">
-        <button class="tab-btn active" id="tabFull" type="button" onclick="switchTab('full')">song.html</button>
-        <button class="tab-btn" id="tabItem" type="button" onclick="switchTab('item')">ցանկի բլոկ</button>
-      </div>
-
-      <div class="code-panel active" id="panelFull">
-        <div class="code-head">
-          <label class="field-label">ԱՄԲՈՂՋԱԿԱՆ ԷՋ</label>
-          <button class="copy-btn" onclick="copyToClipboard('fullHtmlOutput')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V4h12"/></svg>
-            Պատճենել
+        <div class="field-label">GEMINI API ԲԱՆԱԼԻ</div>
+        <div class="field key-row">
+          <input type="password" id="apiKey" placeholder="AIzaSy...">
+          <button class="key-toggle" id="keyToggle" type="button" aria-label="Ցույց տալ բանալին">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
-        <div class="code-box"><textarea id="fullHtmlOutput" readonly></textarea></div>
+        <div class="key-note">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          Բանալին պահվում է միայն քո բրաուզերում
+        </div>
+
+        <div class="field">
+          <div class="field-label">ԿՑԵԼ ԵՐԳԻ ՖԱՅԼԸ (ԸՍՏ ՑԱՆԿՈՒԹՅԱՆ)</div>
+          <label class="file-attach" id="fileAttach" tabindex="0">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.5v5a3 3 0 0 1-3 3h-12a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h5.5"/><circle cx="9" cy="9" r="2"/><path d="M3 16l4.5-4.5a2 2 0 0 1 2.8 0L14 15"/><circle cx="18" cy="6" r="4" fill="#f2994a" stroke="none"/><path d="M18 4.3v3.4M16.6 6h2.8" stroke="#1c1720" stroke-width="1.3"/></svg>
+            <span class="fa-text" id="fileAttachText">Ընտրել աudio ֆայլ</span>
+            <button type="button" class="fa-clear" id="fileClearBtn" aria-label="Հեռացնել ֆայլը">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+            <input type="file" id="audioFile" accept="audio/*">
+          </label>
+        </div>
+
+        <div class="field">
+          <div class="field-label">ԵՐԳԻ ԱՆՈՒՆ</div>
+          <input type="text" id="songTitle" placeholder="օր․ Դուք խոսեք լեռներ">
+        </div>
+
+        <div class="field">
+          <div class="field-label">ԿԱՏԱՐՈՂ / ԵՐԳԻՉ</div>
+          <input type="text" id="artistName" placeholder="օր․ Գաթա Բենդ">
+        </div>
+
+        <div class="field">
+          <div class="field-label">ՖԱՅԼԻ ԱՆՈՒՆ ԿԱՅՔՈՒՄ (MP3)</div>
+          <input type="text" id="fileName" placeholder="օր․ xoseqlerner.mp3">
+        </div>
+
+        <div class="field field-pair">
+          <div>
+            <div class="field-label">ՏԵՎՈՂՈՒԹՅՈՒՆ</div>
+            <input type="text" id="duration" placeholder="օր․ 3:57">
+          </div>
+          <div>
+            <div class="field-label">ԺԱՆՐ</div>
+            <input type="text" id="genre" placeholder="Ժողովրդական">
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">ՀԱՄԱՐԸ ՑԱՆԿՈՒՄ</div>
+          <input type="text" id="songNumber" placeholder="օր․ 58">
+        </div>
+
+        <button class="submit-btn" id="generateBtn" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
+          Գեներացնել
+        </button>
       </div>
 
-      <div class="code-panel" id="panelItem">
-        <div class="code-head">
-          <label class="field-label">ՑԱՆԿԻ ԷԼԵՄԵՆՏ</label>
-          <button class="copy-btn" onclick="copyToClipboard('itemHtmlOutput')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V4h12"/></svg>
-            Պատճենել
-          </button>
+      <!-- RIGHT: output column -->
+      <div class="results-col">
+        <div class="results-empty" id="emptyState">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9" stroke-dasharray="2 3"/><circle cx="12" cy="12" r="2.5"/></svg>
+          <p>Երգի կոդն ու բառերը կհայտնվեն այստեղ՝ տվյալները լրացնելուց հետո</p>
         </div>
-        <div class="code-box"><textarea id="itemHtmlOutput" readonly></textarea></div>
+
+        <div class="loader-state" id="loaderState">
+          <svg class="vinyl" viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="30" fill="#141019" stroke="#3a3140" stroke-width="2"/>
+            <circle cx="32" cy="32" r="23" fill="none" stroke="#3a3140" stroke-width="1"/>
+            <circle cx="32" cy="32" r="16" fill="none" stroke="#3a3140" stroke-width="1"/>
+            <circle cx="32" cy="32" r="9" fill="#d4a24c"/>
+            <circle cx="32" cy="32" r="2.5" fill="#141019"/>
+          </svg>
+          <div class="loader-text">Խոսքերն ու պատմությունը գրվում են<span class="dots"></span></div>
+        </div>
+
+        <div class="error-box" id="errorBox">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16h.01"/></svg>
+          <span id="errorText"></span>
+        </div>
+
+        <div class="results" id="results">
+          <div class="label-card">
+            <div class="label-disc"></div>
+            <div class="label-text">
+              <div class="lt-title" id="labelTitle">—</div>
+              <div class="lt-sub" id="labelSub">—</div>
+            </div>
+          </div>
+
+          <div class="output-card full">
+            <div class="oc-header">
+              <div class="field-label">1. ԱՄԲՈՂՋԱԿԱՆ HTML ԷՋ (song.html)</div>
+              <button class="copy-btn" id="copyFullBtn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V4h12"/></svg>
+                Պատճենել
+              </button>
+            </div>
+            <textarea id="fullHtmlOutput" readonly></textarea>
+          </div>
+
+          <div class="output-card item">
+            <div class="oc-header">
+              <div class="field-label">2. ՑԱՆԿԻ ԷԼԵՄԵՆՏ (div.song-item)</div>
+              <button class="copy-btn" id="copyItemBtn" type="button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V4h12"/></svg>
+                Պատճենել
+              </button>
+            </div>
+            <textarea id="itemHtmlOutput" readonly></textarea>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -494,10 +446,43 @@
   const apiKeyInput = document.getElementById('apiKey');
   const keyToggle = document.getElementById('keyToggle');
   const generateBtn = document.getElementById('generateBtn');
-  const loader = document.getElementById('loader');
+
+  const fileAttach = document.getElementById('fileAttach');
+  const audioFile = document.getElementById('audioFile');
+  const fileAttachText = document.getElementById('fileAttachText');
+  const fileClearBtn = document.getElementById('fileClearBtn');
+  const DEFAULT_FILE_TEXT = 'Ընտրել աudio ֆայլ';
+
+  audioFile.addEventListener('change', () => {
+    if (audioFile.files.length > 0) {
+      fileAttachText.textContent = audioFile.files[0].name;
+      fileAttach.classList.add('has-file');
+    } else {
+      fileAttachText.textContent = DEFAULT_FILE_TEXT;
+      fileAttach.classList.remove('has-file');
+    }
+  });
+  fileClearBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    audioFile.value = '';
+    fileAttachText.textContent = DEFAULT_FILE_TEXT;
+    fileAttach.classList.remove('has-file');
+  });
+  fileAttach.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); audioFile.click(); }
+  });
+
+  const emptyState = document.getElementById('emptyState');
+  const loaderState = document.getElementById('loaderState');
   const errorBox = document.getElementById('errorBox');
   const errorText = document.getElementById('errorText');
-  const outputs = document.getElementById('outputs');
+  const resultsEl = document.getElementById('results');
+
+  const labelTitle = document.getElementById('labelTitle');
+  const labelSub = document.getElementById('labelSub');
+  const fullHtmlOutput = document.getElementById('fullHtmlOutput');
+  const itemHtmlOutput = document.getElementById('itemHtmlOutput');
   const toast = document.getElementById('toast');
 
   if (localStorage.getItem('gemini_api_key')) {
@@ -514,18 +499,15 @@
     setTimeout(() => toast.classList.remove('show'), 1800);
   }
 
-  function showError(msg){
-    errorText.textContent = msg;
-    errorBox.style.display = 'flex';
+  function setState(state){
+    // 'empty' | 'loading' | 'error' | 'results'
+    emptyState.style.display = state === 'empty' ? 'flex' : 'none';
+    loaderState.style.display = state === 'loading' ? 'flex' : 'none';
+    errorBox.style.display = state === 'error' ? 'flex' : 'none';
+    resultsEl.style.display = state === 'results' ? 'flex' : 'none';
   }
-  function hideError(){ errorBox.style.display = 'none'; }
 
-  function switchTab(which){
-    document.getElementById('tabFull').classList.toggle('active', which === 'full');
-    document.getElementById('tabItem').classList.toggle('active', which === 'item');
-    document.getElementById('panelFull').classList.toggle('active', which === 'full');
-    document.getElementById('panelItem').classList.toggle('active', which === 'item');
-  }
+  generateBtn.addEventListener('click', generateSongCode);
 
   async function generateSongCode() {
     const apiKey = apiKeyInput.value.trim();
@@ -536,23 +518,22 @@
     const genre = document.getElementById('genre').value.trim() || "Ժողովրդական";
     const songNumber = document.getElementById('songNumber').value.trim() || "01";
 
-    hideError();
-
     if (!apiKey || !title || !artist || !fileName || !duration) {
-      showError("Խնդրում ենք լրացնել API Key-ը, երգի անունը, կատարողին, ֆայլի անունը և տևողությունը։");
+      errorText.textContent = 'Խնդրում ենք լրացնել API Key-ը, երգի անունը, կատարողին, ֆայլի անունը և տևողությունը։';
+      setState('error');
       return;
     }
 
     localStorage.setItem('gemini_api_key', apiKey);
-    loader.style.display = 'flex';
-    outputs.style.display = 'none';
-    generateBtn.disabled = true;
+    setState('loading');
 
-    const promptText = `Provide the full Armenian lyrics and a 100-word Armenian description for the song "${title}" by "${artist}". 
-Format your output EXACTLY as a JSON object with no markdown formatting, no code block backticks:
+    const hasFileNote = audioFile.files.length > 0 ? `(Audio file provided: ${audioFile.files[0].name})` : '';
+
+    const promptText = `Provide the full accurate lyrics in Armenian script and a 100-word Armenian background description for the song "${title}" performed by "${artist}" ${hasFileNote}.
+Format your response ONLY as a raw JSON object without markdown syntax or backticks:
 {
-  "story": "Around 100 Armenian words describing the history, theme, and meaning of the song.",
-  "lyrics": "Full lyrics in Armenian text."
+  "story": "Detailed 100-word history and description of the song in Armenian.",
+  "lyrics": "Full transcribed lyrics of the song in Armenian."
 }`;
 
     try {
@@ -566,7 +547,8 @@ Format your output EXACTLY as a JSON object with no markdown formatting, no code
       const data = await response.json();
 
       if (data.error) {
-        showError("Սխալ. " + data.error.message);
+        errorText.textContent = 'Սխալ. ' + data.error.message;
+        setState('error');
         return;
       }
 
@@ -574,17 +556,17 @@ Format your output EXACTLY as a JSON object with no markdown formatting, no code
       const songAiData = JSON.parse(rawText);
 
       buildCodes(title, artist, fileName, duration, genre, songNumber, songAiData.story, songAiData.lyrics);
-      outputs.style.display = 'block';
-      switchTab('full');
+      setState('results');
     } catch (err) {
-      showError("Սխալ տեղի ունեցավ տվյալները ստանալիս։ Փորձիր կրկին։");
-    } finally {
-      loader.style.display = 'none';
-      generateBtn.disabled = false;
+      errorText.textContent = 'Սխալ տեղի ունեցավ տվյալները ստանալիս։ Փորձիր կրկին։';
+      setState('error');
     }
   }
 
   function buildCodes(title, artist, fileName, duration, genre, songNumber, story, lyrics) {
+    labelTitle.textContent = title;
+    labelSub.textContent = artist + ' · № ' + songNumber;
+
     const fullHtml = `<!DOCTYPE html>
 <html lang="hy">
 <head>
@@ -636,7 +618,7 @@ Format your output EXACTLY as a JSON object with no markdown formatting, no code
         .download-btn { background: #ffcc00; color: #000; }
         .back-btn { border: 1px solid #ffcc00; color: #ffcc00; }
         .btn:hover { transform: translateY(-3px); opacity: 0.9; }
-        
+
         audio {
             width: 100%;
             margin-top: 20px;
@@ -660,7 +642,7 @@ Format your output EXACTLY as a JSON object with no markdown formatting, no code
         <div class="song-hero">
             <h2>${title}</h2>
             <p>Կատարող՝ ${artist}</p>
-            
+
             <audio controls>
                 <source src="songs/${fileName}" type="audio/mpeg">
             </audio>
@@ -694,23 +676,24 @@ ${lyrics}
             <h3>${title}</h3>
             <p>${artist}</p>
         </div>
-    </div> 
+    </div>
     <div class="song-controls">
         <button class="play-btn">▶</button>
         <span class="duration">${duration}</span>
     </div>
 </div>`;
 
-    document.getElementById('fullHtmlOutput').value = fullHtml;
-    document.getElementById('itemHtmlOutput').value = itemHtml;
+    fullHtmlOutput.value = fullHtml;
+    itemHtmlOutput.value = itemHtml;
   }
 
-  function copyToClipboard(elementId) {
-    const textarea = document.getElementById(elementId);
-    textarea.select();
-    document.execCommand('copy');
+  function copyToClipboard(textarea){
+    navigator.clipboard.writeText(textarea.value);
     showToast('Կոդը պատճենվեց');
   }
+
+  document.getElementById('copyFullBtn').addEventListener('click', () => copyToClipboard(fullHtmlOutput));
+  document.getElementById('copyItemBtn').addEventListener('click', () => copyToClipboard(itemHtmlOutput));
 </script>
 
 </body>
